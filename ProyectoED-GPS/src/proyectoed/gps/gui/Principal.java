@@ -520,7 +520,7 @@ public class Principal extends javax.swing.JFrame {
                 Thread.sleep(1000);
                 Runtime rt = Runtime.getRuntime();
                 rt.exec("dot -Tpng archivo.dot -o imagen.png");
-                Thread.sleep(1500);
+                Thread.sleep(1000);
                 rt.exec("nohup display ./imagen.png");
                 arbol.eliminacion(arbol.getRaiz().getLlaves());//Destruye la estructura
             } catch (IOException | InterruptedException ex) {
@@ -542,19 +542,23 @@ public class Principal extends javax.swing.JFrame {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        cola.clear();
-        if (Integer.parseInt(txtRuta.getText()) > listaRecorridos.size()) {
-            JOptionPane.showMessageDialog(this, "Error la opción elegida no se encuentra en la lista. \nVuelve a intentar.", "ERROR", JOptionPane.ERROR_MESSAGE);
+        if (!txtRuta.getText().isEmpty()) {
+                cola.clear();
+            if (Integer.parseInt(txtRuta.getText()) > listaRecorridos.size()) {
+                JOptionPane.showMessageDialog(this, "Error la opción elegida no se encuentra en la lista. \nVuelve a intentar.", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else {
+                actual = listaRecorridos.get(Integer.parseInt(txtRuta.getText()) - 1);
+                actual.getListaRutas().forEach((rutasRecorres) -> {
+                   cola.add(rutasRecorres);
+                });
+                pasosFaltantes = cola.get(0).getDistancia();
+                rutaActual = cola.get(0);
+                mostarMensajeEnPantalla("\n" + actual.toString());
+            }
+            limpiarComboBox();
         } else {
-            actual = listaRecorridos.get(Integer.parseInt(txtRuta.getText()) - 1);
-            actual.getListaRutas().forEach((rutasRecorres) -> {
-               cola.add(rutasRecorres);
-            });
-            pasosFaltantes = cola.get(0).getDistancia();
-            rutaActual = cola.get(0);
-            mostarMensajeEnPantalla("\n" + actual.toString());
+            JOptionPane.showMessageDialog(null, "Lo siento debes de ingresar un numero.", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-        limpiarComboBox();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btnSiguienteRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteRutaActionPerformed
@@ -569,12 +573,16 @@ public class Principal extends javax.swing.JFrame {
     private void btnAvanzarPasosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAvanzarPasosActionPerformed
         // TODO add your handling code here:
         if (cola != null && !cola.isEmpty()) {
-            if (Integer.parseInt(txtPasos.getText()) >= pasosFaltantes) {
-                siguienteRuta();
+            if (!txtPasos.getText().isEmpty()) {
+                if (Integer.parseInt(txtPasos.getText()) >= pasosFaltantes) {
+                    siguienteRuta();
+                } else {
+                    pasosFaltantes = pasosFaltantes -Integer.parseInt(txtPasos.getText()); 
+                    JOptionPane.showMessageDialog(this, "Has avanzado: " + txtPasos.getText() + " KM\n"
+                            + "Quedan restantes: " + pasosFaltantes + " KM para la siguiente ruta del recorrido.");
+                }
             } else {
-                pasosFaltantes = pasosFaltantes -Integer.parseInt(txtPasos.getText()); 
-                JOptionPane.showMessageDialog(this, "Has avanzado: " + txtPasos.getText() + " KM\n"
-                        + "Quedan restantes: " + pasosFaltantes + " KM para la siguiente ruta del recorrido.");
+                JOptionPane.showMessageDialog(this, "No has ingresado la cantidad de pasos.");
             }
         } else {
            JOptionPane.showMessageDialog(this, "Debes de seleccionar un nuevo destino.");
@@ -598,84 +606,94 @@ public class Principal extends javax.swing.JFrame {
     
     private void btnSelectMejorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectMejorActionPerformed
         // TODO add your handling code here:
-        if (cola != null) {
-            cola.clear();
-        }
-        if (vehiculo) {
-            switch (comboBoxMejor.getSelectedItem().toString()) {
-                case "Gasolina":
-                    actual = listaRecorridos.get(mor.getIndiceMejorPorGasolina());
-                    mostarMensajeEnPantalla("Mejor -> Gasolina \n" + actual.toString());
-                    break;
-                case "Distancia":
-                    actual = listaRecorridos.get(mor.getIndiceMejorPorDistancia());
-                    mostarMensajeEnPantalla("Mejor -> Distancia \n" + actual.toString());
-                    break;
-                default:
-                    mostarMensajeEnPantalla("Mejor -> Gasolina - Distancia \n" + actual.toString());
-                    actual = listaRecorridos.get(mor.getIndiceMejorPorDistanciaYGasolina());
+        if (comboBoxMejor.getSelectedIndex() > -1) {
+            if (cola != null) {
+                cola.clear();
             }
+            if (vehiculo) {
+                switch (comboBoxMejor.getSelectedItem().toString()) {
+                    case "Gasolina":
+                        actual = listaRecorridos.get(mor.getIndiceMejorPorGasolina());
+                        mostarMensajeEnPantalla("Mejor -> Gasolina \n" + actual.toString());
+                        break;
+                    case "Distancia":
+                        actual = listaRecorridos.get(mor.getIndiceMejorPorDistancia());
+                        mostarMensajeEnPantalla("Mejor -> Distancia \n" + actual.toString());
+                        break;
+                    default:
+                        mostarMensajeEnPantalla("Mejor -> Gasolina - Distancia \n" + actual.toString());
+                        actual = listaRecorridos.get(mor.getIndiceMejorPorDistanciaYGasolina());
+                }
+            } else {
+                switch (comboBoxMejor.getSelectedItem().toString()) {
+                    case "Desgaste Físico":
+                        actual = listaRecorridos.get(mor.getIndiceMejorPorDesgasteFisico());
+                        mostarMensajeEnPantalla("Mejor -> Desgaste Físico \n" + actual.toString());
+                        break;
+                    case "Distancia":
+                        actual = listaRecorridos.get(mor.getIndiceMejorPorDistancia());
+                        mostarMensajeEnPantalla("Mejor -> Distancia \n" + actual.toString());
+                        break;
+                    default:
+                        actual = listaRecorridos.get(mor.getIndiceMejorPorDesgasteFisicoYDitancia());
+                        mostarMensajeEnPantalla("Mejor -> Desgaste Físico - Distancia \n" + actual.toString());
+                }
+            }
+            actual.getListaRutas().forEach((rutasRecorres) -> {
+               cola.add(rutasRecorres);
+            });
+            pasosFaltantes = cola.get(0).getDistancia();
+            rutaActual = cola.get(0);
+            limpiarComboBox();
         } else {
-            switch (comboBoxMejor.getSelectedItem().toString()) {
-                case "Desgaste Físico":
-                    actual = listaRecorridos.get(mor.getIndiceMejorPorDesgasteFisico());
-                    mostarMensajeEnPantalla("Mejor -> Desgaste Físico \n" + actual.toString());
-                    break;
-                case "Distancia":
-                    actual = listaRecorridos.get(mor.getIndiceMejorPorDistancia());
-                    mostarMensajeEnPantalla("Mejor -> Distancia \n" + actual.toString());
-                    break;
-                default:
-                    actual = listaRecorridos.get(mor.getIndiceMejorPorDesgasteFisicoYDitancia());
-                    mostarMensajeEnPantalla("Mejor -> Desgaste Físico - Distancia \n" + actual.toString());
-            }
+            JOptionPane.showMessageDialog(null, "Debes de realizar una nueva busqueda.");
         }
-        actual.getListaRutas().forEach((rutasRecorres) -> {
-           cola.add(rutasRecorres);
-        });
-        pasosFaltantes = cola.get(0).getDistancia();
-        rutaActual = cola.get(0);
-        limpiarComboBox();
     }//GEN-LAST:event_btnSelectMejorActionPerformed
 
     private void btnSelectPeorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectPeorActionPerformed
         // TODO add your handling code here:
-        cola.clear();
-        if (vehiculo) {
-            switch (comboBoxMejor.getSelectedItem().toString()) {
-                case "Gasolina":
-                    actual = listaRecorridos.get(mor.getIndicePeorPorGasolina());
-                    mostarMensajeEnPantalla("Peor -> Gasolina \n" + actual.toString());
-                    break;
-                case "Distancia":
-                    actual = listaRecorridos.get(mor.getIndicePeorPorDistancia());
-                    mostarMensajeEnPantalla("Peor -> Distancia \n" + actual.toString());
-                    break;
-                default:
-                    mostarMensajeEnPantalla("Peor -> Gasolina - Distancia\n" + actual.toString());
-                    actual = listaRecorridos.get(mor.getIndicePeorPorDistanciaYGasolina());
+        if (comboPeor.getSelectedIndex() > -1) {
+            if (cola != null) {
+                cola.clear();
             }
+            if (vehiculo) {
+                switch (comboPeor.getSelectedItem().toString()) {
+                    case "Gasolina":
+                        actual = listaRecorridos.get(mor.getIndicePeorPorGasolina());
+                        mostarMensajeEnPantalla("Peor -> Gasolina \n" + actual.toString());
+                        break;
+                    case "Distancia":
+                        actual = listaRecorridos.get(mor.getIndicePeorPorDistancia());
+                        mostarMensajeEnPantalla("Peor -> Distancia \n" + actual.toString());
+                        break;
+                    default:
+                        mostarMensajeEnPantalla("Peor -> Gasolina - Distancia\n" + actual.toString());
+                        actual = listaRecorridos.get(mor.getIndicePeorPorDistanciaYGasolina());
+                }
+            } else {
+                switch (comboPeor.getSelectedItem().toString()) {
+                    case "Desgaste Físico":
+                        actual = listaRecorridos.get(mor.getIndicePeorPorDesgasteFisico());
+                        mostarMensajeEnPantalla("Peor -> Desgaste Físico \n" + actual.toString());
+                        break;
+                    case "Distancia":
+                        actual = listaRecorridos.get(mor.getIndicePeorPorDistancia());
+                        mostarMensajeEnPantalla("Peor -> Distancia \n" + actual.toString());
+                        break;
+                    default:
+                        actual = listaRecorridos.get(mor.getIndicePeorPorDesgasteFisicoYDitancia());
+                        mostarMensajeEnPantalla("Peor -> Desgaste Físico - Distancia \n" + actual.toString());
+                }
+            }
+            actual.getListaRutas().forEach((rutasRecorres) -> {
+               cola.add(rutasRecorres);
+            });
+            pasosFaltantes = cola.get(0).getDistancia();
+            rutaActual = cola.get(0);
+            limpiarComboBox();
         } else {
-            switch (comboBoxMejor.getSelectedItem().toString()) {
-                case "Desgaste Físico":
-                    actual = listaRecorridos.get(mor.getIndicePeorPorDesgasteFisico());
-                    mostarMensajeEnPantalla("Peor -> Desgaste Físico \n" + actual.toString());
-                    break;
-                case "Distancia":
-                    actual = listaRecorridos.get(mor.getIndicePeorPorDistancia());
-                    mostarMensajeEnPantalla("Peor -> Distancia \n" + actual.toString());
-                    break;
-                default:
-                    actual = listaRecorridos.get(mor.getIndicePeorPorDesgasteFisicoYDitancia());
-                    mostarMensajeEnPantalla("Peor -> Desgaste Físico - Distancia \n" + actual.toString());
-            }
-        }
-        actual.getListaRutas().forEach((rutasRecorres) -> {
-           cola.add(rutasRecorres);
-        });
-        pasosFaltantes = cola.get(0).getDistancia();
-        rutaActual = cola.get(0);
-        limpiarComboBox();
+            JOptionPane.showMessageDialog(null, "Debes de realizar una nueva busqueda.");
+        }                                           
     }//GEN-LAST:event_btnSelectPeorActionPerformed
 
     private void txtRutaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRutaKeyTyped

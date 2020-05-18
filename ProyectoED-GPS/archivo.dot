@@ -1,4 +1,4 @@
 digraph g { 
  node [shape=record];
-Nodo14981724[label="<P0>|R_0|<P01>|R_0|<P11>"];
+Nodo27516572[label="<P0>|R_0|<P01>|R_1|<P11>|R_3|<P21>|R_5|<P31>"];
 }
