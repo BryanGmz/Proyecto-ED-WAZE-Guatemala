@@ -1,0 +1,6 @@
+<Quetzaltenango>|<Salcaja>|<50>|<65>|<45.54>|<6>|65
+<Quetzaltenango>|<San Francisco El Alto>|<50>|<65>|<45.54>|<6>|45
+<San Francisco El Alto>|<Salcaja>|<50>|<65>|<5.54>|<6>|35
+<Salcaja>|<San Cristobal>|<50>|<65>|<45.54>|<6>|45
+<Salcaja>|<San Francisco El Alto>|<50>|<65>|<45.54>|<6>|8
+<San Cristobal>|<San Francisco El Alto>|<50>|<65>|<45.54>|<6>|9

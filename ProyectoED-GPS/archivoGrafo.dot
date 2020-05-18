@@ -1,0 +1,15 @@
+digraph g { 
+rankdir=LR;
+Quetzaltenango-> R_0;
+R_0->Salcaja;
+Quetzaltenango-> R_1;
+R_1->San_Francisco_El_Alto;
+Salcaja-> R_3;
+R_3->San_Cristobal;
+Salcaja-> R_2;
+R_2->San_Francisco_El_Alto;
+San_Francisco_El_Alto-> R_2;
+R_2->Salcaja;
+San_Cristobal-> R_5;
+R_5->San_Francisco_El_Alto;
+}
